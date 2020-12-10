@@ -40,12 +40,25 @@ recae sobre el controlador.
 #  Inicializacion del catalogo
 # ___________________________________________________
 
+def newAnalyzer():
+    Taxis = model.newAnalyzer()
+    return Taxis
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
-
+def loadFile(Taxis, tripfile):
+    """
+    """
+    total_trips = 0
+    tripfile = cf.data_dir + tripfile
+    input_file = csv.DictReader(open(tripfile, encoding="utf-8"),
+                                delimiter=",")
+    for trip in input_file:
+        total_trips += 1 
+    return [Taxis,total_trips]
+    
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________

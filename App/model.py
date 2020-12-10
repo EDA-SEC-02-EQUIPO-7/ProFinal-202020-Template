@@ -43,6 +43,26 @@ de creacion y consulta sobre las estructuras de datos.
 # -----------------------------------------------------
 
 # Funciones para agregar informacion al grafo
+def newAnalyzer():
+    Taxis = {
+        "Graph":None}
+    Taxis["Graph"]=gr.newGraph(datastructure="ADJ_LIST",
+                            directed=True,
+                            size=1000,
+                            comparefunction=compareStations)
+
+def addTrip (Taxis,trip):
+    origin = trip["pickup_community_area"]
+    destination = trip["dropoff_community_area"]
+    start_time = trip["trip_start_timestamp"] 
+    end_time = trip["trip_end_timestamp"]
+    duration = m.newMap(maptype='',
+                        comparefunction=compareTime)
+    if origin != destination:
+        add_connection(Taxis,origin,destination,duration)
+
+def add_connection(Taxis,origin, destination, duration):
+    edge=gr.getEdge(bikes["grafo"],origin,destination)
 
 # ==============================
 # Funciones de consulta

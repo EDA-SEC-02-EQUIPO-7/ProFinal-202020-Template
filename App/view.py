@@ -47,7 +47,25 @@ operación seleccionada.
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
-
-"""
+def printMenu():
+    print("\n")
+    print("*******************************************")
+    print("Bienvenido al servicio de consulta de Chicago Taxi Service\nEstas son las consultas que puede realizar:\n")
+    print("1- Inicializar Analizador")
+    print("2- Cargar información de rutas")
+    print("3- Consultar el reporte de Información Compañías y Taxis")
+    print("4- Consultar el sistema de Puntos y Premios a Taxis")
+    print("5- Consultar el Mejor Horario en Taxi entre 2 “community areas” ")
+while True:
+    printMenu()
+    inputs = input('Seleccione una opción para continuar\n>')
+    if int(inputs) == 1:
+        print("\nInicializando....")
+        # cont es el controlador que se usará de acá en adelante
+        cont = controller.newAnalyzer()
+    else:
+        sys.exit(0)
+sys.exit(0)
+"""P
 Menu principal
 """
