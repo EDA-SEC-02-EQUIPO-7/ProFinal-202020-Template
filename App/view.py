@@ -31,6 +31,7 @@ from App import controller
 from DISClib.ADT import stack
 import timeit
 assert config
+import datetime
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -67,14 +68,17 @@ while True:
         Taxis = controller.newAnalyzer()
     if int(inputs) == 2:
         print("\nCargando los Datos de Chicago Taxi Service ....")
-
+        controller.loadFile(Taxis,Taxi_File)
     if int(inputs) == 5:
         initial = input("Escriba su limite horario inferior en fomato HH:MM: ")
         final = input ("Escriba su superior horario inferior en fomato HH:MM: ")
-        vertexA = input ("Escriba el community area de salida: ")
-        vertexB = input ("Escriba el community area de llegada: ")
+        vertexA = input ("Escriba el community area de salida, por ejemplo (32.0): ")
+        vertexB = input ("Escriba el community area de llegada por ejemplo (76.0): ")
         resp = controller.Mejor_Hora(Taxis,initial,final,vertexA,vertexB)
-    
+        Timepo = resp[0]
+        print ("El mejor horario para iniciar su viaje es a las {} con una duracion de {} segundos  ".format(Timepo,resp[1]))
+    if int(inputs) == 0:
+        sys.exit(0)
 
 """
 Menu principal
