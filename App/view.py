@@ -43,7 +43,7 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
-
+Taxi_File = "taxi-trips-wrvz-psew-subset-small.csv"
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -56,16 +56,26 @@ def printMenu():
     print("3- Consultar el reporte de Información Compañías y Taxis")
     print("4- Consultar el sistema de Puntos y Premios a Taxis")
     print("5- Consultar el Mejor Horario en Taxi entre 2 “community areas” ")
+    print("*******************************************")
+    print("\n")
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n>')
     if int(inputs) == 1:
         print("\nInicializando....")
         # cont es el controlador que se usará de acá en adelante
-        cont = controller.newAnalyzer()
-    else:
-        sys.exit(0)
-sys.exit(0)
-"""P
+        Taxis = controller.newAnalyzer()
+    if int(inputs) == 2:
+        print("\nCargando los Datos de Chicago Taxi Service ....")
+
+    if int(inputs) == 5:
+        initial = input("Escriba su limite horario inferior en fomato HH:MM: ")
+        final = input ("Escriba su superior horario inferior en fomato HH:MM: ")
+        vertexA = input ("Escriba el community area de salida: ")
+        vertexB = input ("Escriba el community area de llegada: ")
+        resp = controller.Mejor_Hora(Taxis,initial,final,vertexA,vertexB)
+    
+
+"""
 Menu principal
 """

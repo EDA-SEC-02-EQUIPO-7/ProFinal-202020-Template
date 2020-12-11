@@ -27,7 +27,7 @@
 import config as cf
 from App import model
 import csv
-
+import datetime
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 Existen algunas operaciones en las que se necesita invocar
@@ -42,6 +42,7 @@ recae sobre el controlador.
 
 def newAnalyzer():
     Taxis = model.newAnalyzer()
+    model.create_Hash(Taxis)
     return Taxis
 
 # ___________________________________________________
@@ -57,8 +58,15 @@ def loadFile(Taxis, tripfile):
                                 delimiter=",")
     for trip in input_file:
         total_trips += 1 
+        model.addTrip(Taxis,trip)
     return [Taxis,total_trips]
     
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+def Mejor_Hora (Taxis,initialTime,finalTime,vertexA,vertexB):
+    initialTime = datetime.datetime.strptime(initialTime, '%H:%M')
+    initialTime = model.compareTime(initialTime)
+    finalTime = datetime.datetime.strptime(finalTime, '%H:%M')
+    finalTime = model.compareTime(finalTime)
+    return model.MejorHora(Taxis, initialTime.time(), finalTime.time(),vertexA,vertexB)
