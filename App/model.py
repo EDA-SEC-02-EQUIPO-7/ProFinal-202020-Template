@@ -25,6 +25,7 @@
  """
 import config
 from DISClib.ADT.graph import gr
+from DISClib.ADT import orderedmap as om
 from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
 from DISClib.DataStructures import listiterator as it
@@ -54,6 +55,8 @@ def newAnalyzer():
     Taxis["Hash"] = m.newMap(maptype='',
                             comparefunction=compareStopIds)
     Taxis["lst"] = ["00:00","00:15","00:30","00:45","01:00","01:15","01:30","01:45","02:00","02:15","02:30","02:45","03:00","03:15","03:30","03:45","04:00","04:15","04:30","04:45","05:00","05:15","05:30","5:45","06:00","06:15","06:30","06:45","07:00","07:15","07:30","07:45","08:00","08:15","08:30","08:45","09:00","09:15","09:30","09:45","10:00","10:15","10:30","10:45","11:00","11:15","11:30","11:45","12:00","12:15","12:30","12:45","13:00","13:15","13:30","13:45","14:00","14:15","14:30","14:45","15:00","15:15","15:30","15:45","16:00","16:15","16:30","16:45","17:00","17:15","17:30","17:45","18:00","18:15","18:30","18:45","19:00","19:15","19:30","19:45","20:00","20:15","20:30","20:45","21:00","21:15","21:30","21:45","22:00","22:15","22:30","22:45","23:00","23:15","23:30","23:45"]
+    Taxis["dateIndex"]=om.newMap(omaptype='',
+                                comparefunction=compareDates)
     return Taxis
 
 def addTrip (Taxis,trip):
@@ -70,7 +73,63 @@ def addTrip (Taxis,trip):
             add_community_area(Taxis,origin,start_time)
             add_community_area(Taxis,destination,start_time)
             add_connection(Taxis,origin,destination,duration,start_time)
-
+    updateDateIndex(Taxis["dateIndex"],trip)
+def updateDateIndex(map,trip):
+    start_time = (trip["trip_start_timestamp"])[0:-4]
+    start_time = start_time.replace("T"," ")
+    dateTrip=datetime.datetime.strptime(start_time,'%Y-%m-%d %H:%M:%S')
+    entry =om.get(map,dateTrip.date())
+    if entry is None:
+        datentry = newDataEntry(trip)
+        om.put(map,dateTrip.date() , datentry)
+    else:
+        datentry = me.getValue(entry)
+    addDate(datentry,trip)
+def addDate(datentry,trip):
+    maxpq=datentry["maxpq"]
+    centi=imaxpq.contains(maxpq,trip["taxi_id"])
+    if centi:
+        val = m.get(maxpq['qpMap'], trip["taxi_id"])
+        elem = lt.getElement(maxpq['elements'], val['value'])
+        startpoints=elem["index"]
+        if trip["trip_total"] =="":
+            money=1
+        else:
+            money=float(trip["trip_total"])
+        if trip["trip_miles"] =="":
+            miles=1
+        else:
+            miles=float(trip["trip_miles"])
+        elem["info"]["money"]+=money
+        if elem["info"]["money"]==0:
+            elem["info"]["money"]=1
+        elem["info"]["miles"]+=miles
+        elem["info"]["services"]+=1
+        finalpoint=(elem["info"]["miles"]/elem["info"]["money"])*elem["info"]["services"]
+        if finalpoint>=startpoints:
+            imaxpq.increaseKey(maxpq,trip["taxi_id"],finalpoint)
+        else:
+            imaxpq.decreaseKey(maxpq,trip["taxi_id"],finalpoint)
+    else:
+        imaxpq.insert(maxpq,trip["taxi_id"],0)
+        val = m.get(maxpq['qpMap'], trip["taxi_id"])
+        elem = lt.getElement(maxpq['elements'], val['value'])
+        elem["info"]={"money":0,"miles":0,"services":0}
+        if trip["trip_total"] =="":
+            money=1
+        else:
+            money=float(trip["trip_total"])
+        elem["info"]["money"]+=money
+        if elem["info"]["money"]==0:
+            elem["info"]["money"]=1
+        elem["info"]["miles"]+=float(trip["trip_miles"])
+        elem["info"]["services"]+=1
+        point=(elem["info"]["miles"]/elem["info"]["money"])*elem["info"]["services"]
+        imaxpq.increaseKey(maxpq,trip["taxi_id"],point)
+def newDataEntry(trip):
+    entry ={"maxpq":None}
+    entry["maxpq"]=imaxpq.newIndexMaxPQ(cmpimin)
+    return entry
 def create_Hash (Taxis):
     for i in Taxis["lst"]:
         timeHash = datetime.datetime.strptime(i,"%H:%M")
@@ -133,18 +192,16 @@ def MejorHora(Taxis,límite_Inferior,límite_Superior,vertexA,vertexB):
 # ==============================
 # Funciones Helper
 # ==============================
-def prueba():
-    res=imaxpq.newIndexMaxPQ(cmpfunction=cmpimin)
-    imaxpq.insert(res,"a",515)
-    imaxpq.insert(res,"d",256)
-    imaxpq.insert(res,"g",26)
-    imaxpq.insert(res,"h",785)
-    imaxpq.insert(res,"r",165)
-    imaxpq.insert(res,"t",428)
-    imaxpq.insert(res,"u",483)
-    imaxpq.insert(res,"w",756)
-    imaxpq.insert(res,"k",489)
-    imaxpq.insert(res,"q",751)
+def req2(Taxis,date,num):
+    num=int(num)
+    date=om.get(Taxis["dateIndex"],date)
+    pq=me.getValue(date)
+    pq=(pq["maxpq"])
+    contador=1
+    res=lt.newList('SINGLELINKED', compareDates)
+    while contador <=num:
+        lt.addLast(res,imaxpq.delMax(pq))
+        contador+=1
     return res
 def cmpimin(value1, value2):
     """
@@ -160,6 +217,17 @@ def cmpimin(value1, value2):
 # ==============================
 # Funciones de Comparacion
 # ==============================
+def compareDates(date1, date2):
+    """
+    Compara dos ids de accidentes, id es un identificador
+    y entry una pareja llave-valor
+    """
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1
 def compareTime(hora):
     if hora.minute>=0 and hora.minute<7.5:
         hora=hora.replace(minute=0)

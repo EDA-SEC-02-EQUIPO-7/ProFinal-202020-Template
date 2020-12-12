@@ -32,6 +32,8 @@ from DISClib.ADT import stack
 import timeit
 assert config
 import datetime
+from DISClib.ADT import list as lt
+from DISClib.DataStructures import listiterator as it
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -70,8 +72,19 @@ while True:
         print("\nCargando los Datos de Chicago Taxi Service ....")
         controller.loadFile(Taxis,Taxi_File)
     if int(inputs)==4:
-        res=controller.prueba()
-        print(res)
+        print("mejor taxi fechas")
+        x=input("si desea en rango digite 1, en caso de una fecha especifica 0: ")
+        if x == "0":
+            date = input("Escriba la fecha en formato (AAAA-MM-DD): ")
+            num = input("Cuantos quiere saber")
+            taxi=controller.req2(Taxis,date,num)
+            iterator = it.newIterator(taxi)   
+            indicepelicula = 0                 
+            while  it.hasNext(iterator):
+                element = it.next(iterator)
+                indicepelicula += 1
+                print(str(indicepelicula) + ".  " + element)
+
     if int(inputs) == 5:
         initial = input("Escriba su limite horario inferior en fomato HH:MM: ")
         final = input ("Escriba su superior horario inferior en fomato HH:MM: ")

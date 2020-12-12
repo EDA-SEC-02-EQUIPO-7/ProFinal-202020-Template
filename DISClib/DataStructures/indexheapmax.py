@@ -43,7 +43,7 @@ def insert(iheap, key, index):
     try:
         if not map.contains(iheap['qpMap'], key):
             iheap['size'] += 1
-            lt.insertElement(iheap['elements'], {'key': key, 'index': index},
+            lt.insertElement(iheap['elements'], {'key': key, 'index': index,"info":None},
                              iheap['size'])
             map.put(iheap['qpMap'], key, iheap['size'])
             swim(iheap, iheap['size'])
