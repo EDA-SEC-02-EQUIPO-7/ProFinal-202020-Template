@@ -69,6 +69,9 @@ while True:
     if int(inputs) == 2:
         print("\nCargando los Datos de Chicago Taxi Service ....")
         controller.loadFile(Taxis,Taxi_File)
+    if int(inputs)==4:
+        res=controller.prueba()
+        print(res)
     if int(inputs) == 5:
         initial = input("Escriba su limite horario inferior en fomato HH:MM: ")
         final = input ("Escriba su superior horario inferior en fomato HH:MM: ")

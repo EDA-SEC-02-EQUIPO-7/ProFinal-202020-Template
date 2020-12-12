@@ -70,3 +70,5 @@ def Mejor_Hora (Taxis,initialTime,finalTime,vertexA,vertexB):
     finalTime = datetime.datetime.strptime(finalTime, '%H:%M')
     finalTime = model.compareTime(finalTime)
     return model.MejorHora(Taxis, initialTime.time(), finalTime.time(),vertexA,vertexB)
+def prueba():
+    return model.prueba()

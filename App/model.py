@@ -35,6 +35,7 @@ assert config
 import datetime
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.DataStructures import mapentry as me
+from DISClib.ADT import indexmaxpq as imaxpq
 
 
 """
@@ -132,7 +133,30 @@ def MejorHora(Taxis,límite_Inferior,límite_Superior,vertexA,vertexB):
 # ==============================
 # Funciones Helper
 # ==============================
-
+def prueba():
+    res=imaxpq.newIndexMaxPQ(cmpfunction=cmpimin)
+    imaxpq.insert(res,"a",515)
+    imaxpq.insert(res,"d",256)
+    imaxpq.insert(res,"g",26)
+    imaxpq.insert(res,"h",785)
+    imaxpq.insert(res,"r",165)
+    imaxpq.insert(res,"t",428)
+    imaxpq.insert(res,"u",483)
+    imaxpq.insert(res,"w",756)
+    imaxpq.insert(res,"k",489)
+    imaxpq.insert(res,"q",751)
+    return res
+def cmpimin(value1, value2):
+    """
+    Compara dos estaciones
+    """
+    value2 = value2['key']
+    if (value1 == value2):
+        return 0
+    elif (value1 > value2):
+        return 1
+    else:
+        return -1
 # ==============================
 # Funciones de Comparacion
 # ==============================
