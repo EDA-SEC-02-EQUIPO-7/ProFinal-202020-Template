@@ -73,3 +73,7 @@ def Mejor_Hora (Taxis,initialTime,finalTime,vertexA,vertexB):
 def req2(Taxis,date,num):
     date =  datetime.datetime.strptime(date, '%Y-%m-%d')
     return model.req2(Taxis,date.date(),num)
+def req21(Taxis,date1,date2,num):
+    date1 =  datetime.datetime.strptime(date1, '%Y-%m-%d')
+    date2 =  datetime.datetime.strptime(date2, '%Y-%m-%d')
+    return model.req21(Taxis,date1.date(),date2.date(),num)

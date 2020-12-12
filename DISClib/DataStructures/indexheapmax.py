@@ -77,7 +77,7 @@ def max(iheap):
     try:
         if(iheap['size'] > 0):
             minIdx = lt.getElement(iheap['elements'], 1)
-            return minIdx['key']
+            return minIdx['index']
         return None
     except Exception as exp:
         error.reraise(exp, 'indexheap:min')

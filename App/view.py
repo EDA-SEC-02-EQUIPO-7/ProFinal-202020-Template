@@ -46,7 +46,7 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
-Taxi_File = "taxi-trips-wrvz-psew-subset-small.csv"
+Taxi_File = "taxi-trips-wrvz-psew-subset-large.csv"
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -78,6 +78,17 @@ while True:
             date = input("Escriba la fecha en formato (AAAA-MM-DD): ")
             num = input("Cuantos quiere saber")
             taxi=controller.req2(Taxis,date,num)
+            iterator = it.newIterator(taxi)   
+            indicepelicula = 0                 
+            while  it.hasNext(iterator):
+                element = it.next(iterator)
+                indicepelicula += 1
+                print(str(indicepelicula) + ".  " + element)
+        if x=="1":
+            date1 = input("Escriba la fecha de inicio en formato (AAAA-MM-DD): ")
+            date2 = input("Escriba la fecha final en formato (AAAA-MM-DD): ")
+            num = input("Cuantos quiere saber")
+            taxi=controller.req21(Taxis,date1,date2,num)
             iterator = it.newIterator(taxi)   
             indicepelicula = 0                 
             while  it.hasNext(iterator):
