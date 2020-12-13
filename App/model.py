@@ -66,20 +66,20 @@ def newAnalyzer():
     return Taxis
 
 def addTrip (Taxis,trip):
-    #if (trip["trip_seconds"] != "") and (trip["pickup_community_area"] != trip["dropoff_community_area"] ) and (trip["pickup_community_area"] != "") and(trip["dropoff_community_area"] != "") :
-    #    origin = trip["pickup_community_area"]
-    #    destination = trip["dropoff_community_area"]
-    #    start_time = (trip["trip_start_timestamp"])[0:-4]
-    #    start_time = start_time.replace("T"," ")
-    #    start_time = datetime.datetime.strptime(start_time,'%Y-%m-%d %H:%M:%S') 
-    #    start_time = compareTime(start_time)
-    #    time = (trip["trip_seconds"])
-    #    duration = int(float(time))
-    #    if origin != destination:
-    #        add_community_area(Taxis,origin,start_time)
-    #        add_community_area(Taxis,destination,start_time)
-    #        add_connection(Taxis,origin,destination,duration,start_time)
-    #updateDateIndex(Taxis["dateIndex"],trip)
+    if (trip["trip_seconds"] != "") and (trip["pickup_community_area"] != trip["dropoff_community_area"] ) and (trip["pickup_community_area"] != "") and(trip["dropoff_community_area"] != "") :
+        origin = trip["pickup_community_area"]
+        destination = trip["dropoff_community_area"]
+        start_time = (trip["trip_start_timestamp"])[0:-4]
+        start_time = start_time.replace("T"," ")
+        start_time = datetime.datetime.strptime(start_time,'%Y-%m-%d %H:%M:%S') 
+        start_time = compareTime(start_time)
+        time = (trip["trip_seconds"])
+        duration = int(float(time))
+        if origin != destination:
+            add_community_area(Taxis,origin,start_time)
+            add_community_area(Taxis,destination,start_time)
+            add_connection(Taxis,origin,destination,duration,start_time)
+    updateDateIndex(Taxis["dateIndex"],trip)
     addBrant(Taxis,trip["company"],trip["taxi_id"])
     #addTaxi(Taxis,trip["taxi_id"])
 
