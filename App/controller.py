@@ -77,3 +77,7 @@ def req21(Taxis,date1,date2,num):
     date1 =  datetime.datetime.strptime(date1, '%Y-%m-%d')
     date2 =  datetime.datetime.strptime(date2, '%Y-%m-%d')
     return model.req21(Taxis,date1.date(),date2.date(),num)
+def req11(Taxis,m):
+    return model.req11(Taxis,m)
+def req12(Taxis,n):
+    return model.req12(Taxis,n)

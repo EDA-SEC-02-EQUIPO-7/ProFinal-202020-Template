@@ -71,6 +71,22 @@ while True:
     if int(inputs) == 2:
         print("\nCargando los Datos de Chicago Taxi Service ....")
         controller.loadFile(Taxis,Taxi_File)
+    if int(inputs)== 3:
+        print("Optimizar servicio")
+        x=input("digite 0 para el top M compañias con más taxis afiliados, 1 para el top n de compañias com más servicios")
+        if x =="0":
+            m=int(input("¿cuantos desea saber?"))
+            y=controller.req11(Taxis,m)
+        if x=="1":
+            n=int(input("¿cuantos desea saber?"))
+            y=controller.req12(Taxis,n)
+        iterator = it.newIterator(y)   
+        indicepelicula = 0                 
+        while  it.hasNext(iterator):
+            element = it.next(iterator)
+            indicepelicula += 1
+            print(str(indicepelicula) + ".  " + element["company"]+" con una cantidad de "+str(element["cantidad"]))
+
     if int(inputs)==4:
         print("mejor taxi fechas")
         x=input("si desea en rango digite 1, en caso de una fecha especifica 0: ")

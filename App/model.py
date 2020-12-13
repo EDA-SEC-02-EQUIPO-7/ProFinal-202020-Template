@@ -57,23 +57,85 @@ def newAnalyzer():
     Taxis["lst"] = ["00:00","00:15","00:30","00:45","01:00","01:15","01:30","01:45","02:00","02:15","02:30","02:45","03:00","03:15","03:30","03:45","04:00","04:15","04:30","04:45","05:00","05:15","05:30","5:45","06:00","06:15","06:30","06:45","07:00","07:15","07:30","07:45","08:00","08:15","08:30","08:45","09:00","09:15","09:30","09:45","10:00","10:15","10:30","10:45","11:00","11:15","11:30","11:45","12:00","12:15","12:30","12:45","13:00","13:15","13:30","13:45","14:00","14:15","14:30","14:45","15:00","15:15","15:30","15:45","16:00","16:15","16:30","16:45","17:00","17:15","17:30","17:45","18:00","18:15","18:30","18:45","19:00","19:15","19:30","19:45","20:00","20:15","20:30","20:45","21:00","21:15","21:30","21:45","22:00","22:15","22:30","22:45","23:00","23:15","23:30","23:45"]
     Taxis["dateIndex"]=om.newMap(omaptype='BST',
                                 comparefunction=compareDates)
+    Taxis["Brand"]= m.newMap(maptype='',
+                            comparefunction=compareStopIds)
+    Taxis["ids"]=m.newMap(maptype='',
+                            comparefunction=compareStopIds)
+    Taxis["afiliado"]=imaxpq.newIndexMaxPQ(cmpimin)
+    Taxis["servicio"]=imaxpq.newIndexMaxPQ(cmpimin)
     return Taxis
 
 def addTrip (Taxis,trip):
-    if (trip["trip_seconds"] != "") and (trip["pickup_community_area"] != trip["dropoff_community_area"] ) and (trip["pickup_community_area"] != "") and(trip["dropoff_community_area"] != "") :
-        origin = trip["pickup_community_area"]
-        destination = trip["dropoff_community_area"]
-        start_time = (trip["trip_start_timestamp"])[0:-4]
-        start_time = start_time.replace("T"," ")
-        start_time = datetime.datetime.strptime(start_time,'%Y-%m-%d %H:%M:%S') 
-        start_time = compareTime(start_time)
-        time = (trip["trip_seconds"])
-        duration = int(float(time))
-        if origin != destination:
-            add_community_area(Taxis,origin,start_time)
-            add_community_area(Taxis,destination,start_time)
-            add_connection(Taxis,origin,destination,duration,start_time)
-    updateDateIndex(Taxis["dateIndex"],trip)
+    #if (trip["trip_seconds"] != "") and (trip["pickup_community_area"] != trip["dropoff_community_area"] ) and (trip["pickup_community_area"] != "") and(trip["dropoff_community_area"] != "") :
+    #    origin = trip["pickup_community_area"]
+    #    destination = trip["dropoff_community_area"]
+    #    start_time = (trip["trip_start_timestamp"])[0:-4]
+    #    start_time = start_time.replace("T"," ")
+    #    start_time = datetime.datetime.strptime(start_time,'%Y-%m-%d %H:%M:%S') 
+    #    start_time = compareTime(start_time)
+    #    time = (trip["trip_seconds"])
+    #    duration = int(float(time))
+    #    if origin != destination:
+    #        add_community_area(Taxis,origin,start_time)
+    #        add_community_area(Taxis,destination,start_time)
+    #        add_connection(Taxis,origin,destination,duration,start_time)
+    #updateDateIndex(Taxis["dateIndex"],trip)
+    addBrant(Taxis,trip["company"],trip["taxi_id"])
+    #addTaxi(Taxis,trip["taxi_id"])
+
+#def addTaxi(Taxis, id):
+    #taxi=Taxis["ids"]
+    #exist=m.contains(Taxis["ids"],id)
+    #if exist:
+    #    val=m.get(taxi,id)
+    #    val["value"]+=1
+    #else:
+    #    m.put(taxi,id,1)  
+
+def addBrant(Taxis,company, id):
+    companies = Taxis["Brand"]
+    existcompany = m.contains(Taxis["Brand"],company)
+    if existcompany:
+        entry = m.get(companies,company)
+        producer = me.getValue(entry)
+    else:
+        producer = newCompany(company)
+        m.put(companies, company, producer)
+    lt.addLast(producer["Taxis"], id)
+    centi=imaxpq.contains(Taxis["servicio"],producer["name"])
+    if centi:
+        imaxpq.increaseKey(Taxis["servicio"],producer["name"],lt.size(producer["Taxis"]))
+    else:
+        imaxpq.insert(Taxis["servicio"],producer["name"],lt.size(producer["Taxis"]))
+    companies = producer["hash"]
+    existcompany = m.contains(producer["hash"],id)
+    if existcompany:
+        entry = m.get(companies,id)
+        entry["value"]+=1
+    else:
+        m.put(companies, id, 1)
+    centi=imaxpq.contains(Taxis["afiliado"],producer["name"])
+    if centi:
+        imaxpq.increaseKey(Taxis["afiliado"],producer["name"],m.size(producer["hash"]))
+    else:
+        imaxpq.insert(Taxis["afiliado"],producer["name"],m.size(producer["hash"]))
+
+    
+
+
+
+
+
+def newCompany (producername):
+    producer = {'name': None , "Taxis": None, }
+    producer['name'] = producername
+    producer['Taxis'] = lt.newList("ARRAY_LIST",CompareMoviesIds)
+    producer["hash"]=m.newMap(maptype='',
+                            comparefunction=compareStopIds)
+    return producer
+def newBrant (brantName):
+     None
+
 def updateDateIndex(map,trip):
     start_time = (trip["trip_start_timestamp"])[0:-4]
     start_time = start_time.replace("T"," ")
@@ -167,6 +229,31 @@ def add_community_area(Taxis, community_area,start_time):
  # ==============================
 # Requerimientos 
 # ==============================
+def req11(Taxis,n):
+    res=lt.newList('SINGLELINKED', compareDates)
+    contador=1
+    while contador <=n:
+        x=imaxpq.delMax(Taxis["servicio"])
+        y=m.get(Taxis['Brand'],x)
+        y=me.getValue(y)
+        y=lt.size(y["Taxis"])
+        dic={"company":x,"cantidad":y}
+        lt.addLast(res,dic)
+        contador+=1
+    return res
+    
+def req12(Taxis,n):
+    res=lt.newList('SINGLELINKED', compareDates)
+    contador=1
+    while contador <=n:
+        x=imaxpq.delMax(Taxis["afiliado"])
+        y=m.get(Taxis["Brand"],x)
+        y=me.getValue(y)
+        y=m.size(y["hash"])
+        dic={"company":x,"cantidad":y}
+        lt.addLast(res,dic)
+        contador+=1
+    return res
 
 def MejorHora(Taxis,límite_Inferior,límite_Superior,vertexA,vertexB):
     Mejor = 200000
@@ -295,5 +382,29 @@ def compareHour (hour1,hour2):
         return 0
     elif (hour1.hour > hour2.hour):
         return 1 
+    else:
+        return -1
+
+def CompareMoviesIds(id1, id2):
+    """
+    Compara dos ids de peliculas
+    """
+    if (id1 == id2):
+        return 0
+    elif id1 > id2:
+        return 1
+    else:
+        return -1
+
+def compareMapMoviesIds(id, entry):
+    """
+    Compara dos ids de libros, id es un identificador
+    y entry una pareja llave-valor
+    """
+    identry = me.getKey(entry)
+    if (int(id) == int(identry)):
+        return 0
+    elif (int(id) > (int(identry))):
+        return 1
     else:
         return -1
